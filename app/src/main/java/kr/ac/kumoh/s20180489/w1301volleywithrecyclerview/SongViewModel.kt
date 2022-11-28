@@ -9,6 +9,8 @@ import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONArray
+import org.json.JSONObject
 
 class SongViewModel(application: Application) : AndroidViewModel(application) {
     data class Song(var id: Int, var title: String, var singer: String)
@@ -36,10 +38,9 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
             "https://expresssongdb-vhkim.run.goorm.io/",
             null,
             {
-                Toast.makeText(
-                    getApplication(),
-                    it.toString(), Toast.LENGTH_LONG
-                ).show()
+                songs.clear()
+                parseJson(it)
+                _list.value = songs
             },
             {
                 Toast.makeText(
@@ -48,5 +49,20 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
                 ).show()
             }
         )
+    }
+
+    private fun parseJson(items: JSONArray) {
+        for(i in 0 until items.length()) {
+            val item = items[i] as JSONObject
+            var id = item.getInt("id")
+            var title = item.getString("title")
+            var singer = item.getString("singer")
+            songs.add(Song(id, title, singer))
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        queue.cancelAll(QUEUE_TAG)
     }
 }
