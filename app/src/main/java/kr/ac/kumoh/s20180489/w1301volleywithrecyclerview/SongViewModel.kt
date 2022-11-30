@@ -54,9 +54,9 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
     private fun parseJson(items: JSONArray) {
         for(i in 0 until items.length()) {
             val item = items[i] as JSONObject
-            var id = item.getInt("id")
-            var title = item.getString("title")
-            var singer = item.getString("singer")
+            val id = item.getInt("id")
+            val title = item.getString("title")
+            val singer = item.getString("singer")
             songs.add(Song(id, title, singer))
         }
     }
